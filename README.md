@@ -73,13 +73,12 @@ LLM/AI 개발을 위한 수학 기초를 효과적으로 학습할 수 있는 �
 ### 1. 선행 요구사항
 - Node.js 18+
 - Ollama (로컬 LLM 실행)
+- Qwen 2.5 7B 모델 (이미 설치됨)
 
-### 2. Ollama 설치 및 실행
+### 2. Ollama 시작
 
 ```bash
-# Ollama 다운로드: https://ollama.ai
-
-# Qwen 2.5 7B 모델 다운로드 및 실행
+# Ollama 실행 (새 터미널)
 ollama run qwen2.5:7b
 ```
 

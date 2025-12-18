@@ -6,7 +6,7 @@ MathForLLM을 3분 안에 실행하세요!
 
 1. **Node.js 18+** 설치: https://nodejs.org
 2. **Ollama 설치**: https://ollama.ai
-3. **Qwen 2.5 7B 모델 다운로드**
+3. **Qwen 2.5 7B 모델** (이미 설치됨)
 
 ## Step 1: Ollama 실행
 
@@ -15,7 +15,7 @@ MathForLLM을 3분 안에 실행하세요!
 ollama run qwen2.5:7b
 ```
 
-모델이 다운로드되고 실행될 때까지 잠시 기다리세요.
+Ollama가 시작될 때까지 잠시 기다리세요.
 
 ## Step 2: 백엔드 시작
 
