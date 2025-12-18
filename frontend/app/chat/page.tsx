@@ -2,32 +2,100 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { Send, ArrowLeft, Loader, MessageCircle } from "lucide-react";
+import { Send, ArrowLeft, Loader, MessageCircle, Trash2 } from "lucide-react";
 import axios from "axios";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import "katex/dist/katex.min.css";
 
 interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
   sources?: Array<{ file: string; section: string; relevance: number }>;
-  timestamp: Date;
+  timestamp: string;
+}
+
+interface ChatSession {
+  sessionId: string;
+  mode: "normal" | "roleplay";
+  messages: Message[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const STORAGE_KEY = "mathForLLM_chat_sessions";
+const CURRENT_SESSION_KEY = "mathForLLM_current_session";
 
 export default function ChatPage() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      role: "assistant",
-      content: "안녕하세요! LLM 수학에 대해 무엇이든 물어보세요. 📚 참고: 저장된 교재 44개",
-      timestamp: new Date(),
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [answerMode, setAnswerMode] = useState<"normal" | "roleplay">("normal");
+  const [sessionId, setSessionId] = useState<string>("");
+  const [isLoaded, setIsLoaded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // LocalStorage에서 세션 로드
+  useEffect(() => {
+    const savedSessionId = localStorage.getItem(CURRENT_SESSION_KEY);
+    const sessions = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]") as ChatSession[];
+
+    let session: ChatSession | undefined;
+
+    if (savedSessionId) {
+      session = sessions.find((s) => s.sessionId === savedSessionId);
+    }
+
+    if (session) {
+      setMessages(session.messages);
+      setAnswerMode(session.mode);
+      setSessionId(session.sessionId);
+    } else {
+      // 새로운 세션 생성
+      const newSessionId = `session_${Date.now()}`;
+      const initialMessage: Message = {
+        id: "1",
+        role: "assistant",
+        content: "안녕하세요! LLM 수학에 대해 무엇이든 물어보세요. 📚 참고: 저장된 교재 44개",
+        timestamp: new Date().toISOString(),
+      };
+      setMessages([initialMessage]);
+      setSessionId(newSessionId);
+      localStorage.setItem(CURRENT_SESSION_KEY, newSessionId);
+    }
+
+    setIsLoaded(true);
+  }, []);
+
+  // 메시지가 변경될 때마다 저장
+  useEffect(() => {
+    if (!isLoaded || !sessionId) return;
+
+    const sessions = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]") as ChatSession[];
+    const existingIndex = sessions.findIndex((s) => s.sessionId === sessionId);
+
+    const session: ChatSession = {
+      sessionId,
+      mode: answerMode,
+      messages,
+      createdAt: existingIndex >= 0 ? sessions[existingIndex].createdAt : new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    if (existingIndex >= 0) {
+      sessions[existingIndex] = session;
+    } else {
+      sessions.push(session);
+    }
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+  }, [messages, answerMode, sessionId, isLoaded]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -46,7 +114,7 @@ export default function ChatPage() {
       id: Date.now().toString(),
       role: "user",
       content: input,
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
     };
 
     setMessages((prev) => [...prev, userMessage]);
@@ -69,7 +137,7 @@ export default function ChatPage() {
         role: "assistant",
         content: response.data.answer,
         sources: response.data.sources,
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
@@ -79,11 +147,27 @@ export default function ChatPage() {
         id: Date.now().toString(),
         role: "assistant",
         content: "죄송합니다. 응답 생성 중 오류가 발생했습니다. 다시 시도해주세요.",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleNewSession = () => {
+    if (window.confirm("새로운 세션을 시작하시겠습니까?")) {
+      const newSessionId = `session_${Date.now()}`;
+      const initialMessage: Message = {
+        id: "1",
+        role: "assistant",
+        content: "안녕하세요! LLM 수학에 대해 무엇이든 물어보세요. 📚 참고: 저장된 교재 44개",
+        timestamp: new Date().toISOString(),
+      };
+      setMessages([initialMessage]);
+      setSessionId(newSessionId);
+      setAnswerMode("normal");
+      localStorage.setItem(CURRENT_SESSION_KEY, newSessionId);
     }
   };
 
@@ -99,11 +183,14 @@ export default function ChatPage() {
             >
               <ArrowLeft className="w-5 h-5 text-gray-600" />
             </Link>
-            <h1 className="text-xl font-bold text-gray-900">일반 질문 모드</h1>
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">일반 질문 모드</h1>
+              <p className="text-xs text-gray-500">세션 ID: {sessionId.slice(-8)}</p>
+            </div>
           </div>
 
-          {/* Answer Mode Toggle */}
-          <div className="flex gap-2">
+          {/* Answer Mode Toggle & Session Controls */}
+          <div className="flex gap-2 items-center">
             <button
               onClick={() => setAnswerMode("normal")}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
@@ -123,6 +210,13 @@ export default function ChatPage() {
               }`}
             >
               역할극 모드
+            </button>
+            <button
+              onClick={handleNewSession}
+              className="px-3 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
+              title="새로운 세션 시작"
+            >
+              <Trash2 className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -150,9 +244,72 @@ export default function ChatPage() {
                     : "bg-gray-100 text-gray-900"
                 }`}
               >
-                <p className="text-sm sm:text-base whitespace-pre-wrap">
-                  {message.content}
-                </p>
+                {message.role === "user" ? (
+                  <p className="text-sm sm:text-base whitespace-pre-wrap">
+                    {message.content}
+                  </p>
+                ) : (
+                  <div className="prose prose-sm max-w-none dark:prose-invert">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm, remarkMath]}
+                      rehypePlugins={[rehypeKatex]}
+                      components={{
+                        code: ({ node, inline, className, children, ...props }: any) => {
+                          const match = /language-(\w+)/.exec(className || "");
+                          return !inline && match ? (
+                            <SyntaxHighlighter
+                              style={oneDark}
+                              language={match[1]}
+                              PreTag="div"
+                              {...props}
+                            >
+                              {String(children).replace(/\n$/, "")}
+                            </SyntaxHighlighter>
+                          ) : (
+                            <code className="bg-gray-800 text-orange-300 px-2 py-1 rounded text-xs" {...props}>
+                              {children}
+                            </code>
+                          );
+                        },
+                        table: ({ node, ...props }: any) => (
+                          <table className="border-collapse border border-gray-400 w-full my-2" {...props} />
+                        ),
+                        th: ({ node, ...props }: any) => (
+                          <th className="border border-gray-400 bg-gray-200 px-3 py-2 text-left" {...props} />
+                        ),
+                        td: ({ node, ...props }: any) => (
+                          <td className="border border-gray-400 px-3 py-2" {...props} />
+                        ),
+                        h1: ({ node, ...props }: any) => (
+                          <h1 className="text-2xl font-bold my-3" {...props} />
+                        ),
+                        h2: ({ node, ...props }: any) => (
+                          <h2 className="text-xl font-bold my-2" {...props} />
+                        ),
+                        h3: ({ node, ...props }: any) => (
+                          <h3 className="text-lg font-bold my-2" {...props} />
+                        ),
+                        ul: ({ node, ...props }: any) => (
+                          <ul className="list-disc list-inside my-2 space-y-1" {...props} />
+                        ),
+                        ol: ({ node, ...props }: any) => (
+                          <ol className="list-decimal list-inside my-2 space-y-1" {...props} />
+                        ),
+                        blockquote: ({ node, ...props }: any) => (
+                          <blockquote className="border-l-4 border-gray-400 pl-4 italic my-2" {...props} />
+                        ),
+                        a: ({ node, ...props }: any) => (
+                          <a className="text-blue-600 underline hover:text-blue-800" {...props} />
+                        ),
+                        p: ({ node, ...props }: any) => (
+                          <p className="my-2" {...props} />
+                        ),
+                      }}
+                    >
+                      {message.content}
+                    </ReactMarkdown>
+                  </div>
+                )}
                 {message.sources && message.sources.length > 0 && (
                   <div className="mt-3 pt-3 border-t border-gray-300 text-xs text-gray-600">
                     <p className="font-semibold mb-1">📚 참고 자료:</p>
