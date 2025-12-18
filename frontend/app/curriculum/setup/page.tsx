@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader } from "lucide-react";
 import axios from "axios";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
@@ -15,10 +15,28 @@ export default function CurriculumSetupPage() {
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [progress, setProgress] = useState(0);
   const [preview, setPreview] = useState({
     totalDays: 0,
     completionDate: "",
   });
+
+  // 로딩 중일 때 프로그래스 시뮬레이션
+  useEffect(() => {
+    if (!loading) {
+      setProgress(0);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 90) return prev; // 90%까지만 진행
+        return prev + Math.random() * 30;
+      });
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [loading]);
 
   const calculatePreview = () => {
     const start = new Date(startDate);
@@ -38,6 +56,7 @@ export default function CurriculumSetupPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setProgress(0);
 
     try {
       const response = await axios.post(`${API_URL}/api/curriculum`, {
@@ -46,15 +65,20 @@ export default function CurriculumSetupPage() {
         startDate,
       });
 
-      // Save curriculum to localStorage
-      localStorage.setItem("curriculum", JSON.stringify(response.data));
+      // 완료 표시
+      setProgress(100);
 
-      // Redirect to curriculum page
-      window.location.href = `/curriculum/learn/${response.data.curriculumId}`;
+      // Save curriculum to localStorage
+      localStorage.setItem("mathForLLM_curriculum", JSON.stringify(response.data));
+
+      // 약간의 딜레이 후 리다이렉트 (완료 상태를 사용자가 볼 수 있도록)
+      setTimeout(() => {
+        window.location.href = `/curriculum/learn/${response.data.curriculumId}`;
+      }, 500);
     } catch (err) {
       setError("학습 계획 생성 중 오류가 발생했습니다. 다시 시도해주세요.");
       console.error(err);
-    } finally {
+      setProgress(0);
       setLoading(false);
     }
   };
@@ -197,10 +221,24 @@ export default function CurriculumSetupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-6 py-3 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              className="w-full px-6 py-3 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
             >
-              {loading ? "계획 생성 중..." : "학습 계획 생성하기"}
+              {loading ? (
+                <>
+                  <Loader className="w-5 h-5 animate-spin" />
+                  계획 생성 중...
+                </>
+              ) : (
+                "학습 계획 생성하기"
+              )}
             </button>
+
+            {/* 로딩 안내 */}
+            {!loading && (
+              <div className="text-center text-sm text-gray-600">
+                💡 학습 계획 생성은 10~30초 정도 소요될 수 있습니다.
+              </div>
+            )}
           </form>
         </div>
 
@@ -214,6 +252,70 @@ export default function CurriculumSetupPage() {
           </p>
         </div>
       </div>
+
+      {/* 로딩 오버레이 및 프로그래스 바 */}
+      {loading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
+            <div className="text-center">
+              <div className="flex justify-center mb-6">
+                <div className="relative w-16 h-16">
+                  <div className="absolute inset-0 rounded-full border-4 border-gray-200"></div>
+                  <div
+                    className="absolute inset-0 rounded-full border-4 border-transparent border-t-amber-600 border-r-amber-600 animate-spin"
+                    style={{
+                      animation: "spin 1s linear infinite",
+                    }}
+                  ></div>
+                </div>
+              </div>
+
+              <h2 className="text-xl font-bold text-gray-900 mb-2">
+                학습 계획 생성 중
+              </h2>
+              <p className="text-gray-600 mb-6 text-sm">
+                AI 기반 맞춤형 커리큘럼을 생성하고 있습니다.
+                <br />
+                잠시만 기다려주세요...
+              </p>
+
+              {/* 프로그래스 바 */}
+              <div className="mb-6">
+                <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                  <div
+                    className="bg-gradient-to-r from-amber-500 to-amber-600 h-full rounded-full transition-all duration-300"
+                    style={{ width: `${Math.min(progress, 100)}%` }}
+                  ></div>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  {Math.round(Math.min(progress, 100))}% 완료
+                </p>
+              </div>
+
+              {/* 로딩 팁 */}
+              <div className="bg-blue-50 rounded-lg p-4 text-sm text-blue-800 border border-blue-200">
+                <p>
+                  ⏱️ 이 작업은 보통 <strong>10~30초</strong> 정도 소요됩니다.
+                </p>
+                <p className="mt-2 text-xs text-blue-600">
+                  더 빨리 처리되거나 오래 걸릴 수 있습니다.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style jsx>{`
+        @keyframes spin {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+      `}</style>
     </div>
   );
 }
