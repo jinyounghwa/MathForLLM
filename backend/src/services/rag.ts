@@ -1,54 +1,28 @@
-import { generateResponse, generateEmbedding } from "./llm";
-import { searchDocuments } from "./vectordb";
+import { generateResponse, generateEmbedding } from "./llm.js";
+import { searchDocuments } from "./vectordb.js";
 
-const NORMAL_SYSTEM_PROMPT = `당신은 LLM/AI 수학을 가르치는 전문 강사입니다.
+const NORMAL_SYSTEM_PROMPT = `당신은 LLM/AI 수학 강사입니다. 간결하고 정확하게 답변하세요.
 
-역할:
-- 수학 개념을 명확하고 간결하게 설명
-- 실제 LLM 구현에서 어떻게 사용되는지 연결
-- 수식과 함께 직관적인 설명 제공
+형식:
+1) 정의 (1문장)
+2) 수식 (LaTeX)
+3) 예제
 
-답변 형식:
-1. 개념 정의 (1-2문장)
-2. 수식 (LaTeX 또는 간단한 표기)
-3. LLM과의 연관성
-4. 간단한 예제
+제약: 300자 이내, 직결한 설명만 제공`;
 
-제약사항:
-- 답변은 300자 이내로 간결하게
-- 수학 용어는 한글과 영어 병기
-- 참고 자료 출처 명시`;
+const ROLEPLAY_SYSTEM_PROMPT = `당신은 AI 개발 시뮬레이션 멘토입니다. 실무 상황에서 필요한 개념을 설명하세요.
 
-const ROLEPLAY_SYSTEM_PROMPT = `당신은 LLM 개발 시뮬레이션을 진행하는 멘토입니다.
-
-역할:
-- 실제 업무 상황을 설정하여 몰입도 증가
-- 왜 이 수학이 필요한지 맥락 제공
-- 학습자가 문제를 해결하는 주인공
-
-답변 형식:
-【역할극 시작】
-
-상황: (실무/연구 상황 설정)
-당신의 역할: (학습자 역할)
-미션: (해결해야 할 과제)
-
+형식:
+【역할극】
+상황: (1줄 상황)
+역할: (1줄)
+미션: (1줄)
 ---
+개념 설명: (간결하게)
+적용: (예시)
+【종료】
 
-(개념 설명 - 상황과 연결)
-
-실전 적용:
-(구체적 예시)
-
-다음 단계:
-(추가 학습 제안)
-
-【역할극 종료】
-
-제약사항:
-- 상황은 현실적이고 공감 가능하게
-- 전문 용어는 상황 속에서 자연스럽게 소개
-- 학습자의 성취감을 높이는 톤`;
+제약: 500자 이내, 직결하고 실용적으로`;
 
 interface RAGResponse {
   answer: string;

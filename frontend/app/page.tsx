@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { BookOpen, Settings } from "lucide-react";
+import { BookOpen, Settings, BarChart3 } from "lucide-react";
 
 export default function Home() {
   const [selectedMode, setSelectedMode] = useState<"free" | "curriculum" | null>(null);
@@ -20,8 +20,15 @@ export default function Home() {
           <p className="text-sm text-gray-500 mt-2">Qwen 2.5 7B 기반 AI 멘토와 함께하는 대화형 학습</p>
         </div>
 
-        {/* Settings Button */}
-        <div className="absolute top-6 right-6">
+        {/* Top Navigation */}
+        <div className="absolute top-6 right-6 flex gap-2">
+          <Link
+            href="/dashboard"
+            className="p-2 hover:bg-white rounded-lg transition-colors"
+            title="학습 대시보드"
+          >
+            <BarChart3 className="w-6 h-6 text-gray-600" />
+          </Link>
           <Link
             href="/settings"
             className="p-2 hover:bg-white rounded-lg transition-colors"

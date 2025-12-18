@@ -1,9 +1,10 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { serve } from "@hono/node-server";
-import { initializeVectorDB } from "./services/vectordb";
-import chatRoute from "./routes/chat";
-import curriculumRoute from "./routes/curriculum";
+import { initializeVectorDB } from "./services/vectordb.js";
+import chatRoute from "./routes/chat.js";
+import curriculumRoute from "./routes/curriculum.js";
+import statsRoute from "./routes/stats.js";
 
 const app = new Hono();
 
@@ -13,6 +14,7 @@ app.use("*", cors());
 // Routes
 app.route("/api/chat", chatRoute);
 app.route("/api/curriculum", curriculumRoute);
+app.route("/api/stats", statsRoute);
 
 // Health check
 app.get("/health", (c) => c.json({ status: "ok" }));

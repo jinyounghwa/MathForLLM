@@ -1,4 +1,5 @@
 import axios from "axios";
+import { enhanceEducationalResponse, validateResponse } from "./response-cleaner.js";
 
 const OLLAMA_URL = process.env.OLLAMA_URL || "http://localhost:11434";
 const MODEL = "qwen2.5:7b";
@@ -50,7 +51,19 @@ export async function generateResponse(
       { timeout: 60000 }
     );
 
-    return response.data.response.trim();
+    // Validate and clean response
+    const rawResponse = response.data.response.trim();
+    const validationResult = validateResponse(rawResponse);
+
+    if (!validationResult.isValid) {
+      console.warn(`Response validation failed: ${validationResult.message}`);
+      throw new Error(`LLM response validation failed: ${validationResult.message}`);
+    }
+
+    // Enhance and clean the response
+    const cleanedResponse = enhanceEducationalResponse(validationResult.cleaned || rawResponse);
+
+    return cleanedResponse;
   } catch (error) {
     console.error("LLM 생성 오류:", error);
     throw new Error("LLM 응답 생성 실패");

@@ -10,7 +10,7 @@ interface Message {
   role: "user" | "assistant";
   content: string;
   sources?: Array<{ file: string; section: string; relevance: number }>;
-  timestamp: Date;
+  timestamp: string;
 }
 
 interface LearningDay {
@@ -28,7 +28,13 @@ interface Curriculum {
   schedule: LearningDay[];
 }
 
+interface DayMessages {
+  [dayNumber: number]: Message[];
+}
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const CURRICULUM_KEY = "mathForLLM_curriculum";
+const DAY_MESSAGES_KEY = "mathForLLM_day_messages";
 
 export default function CurriculumLearningPage({
   params,
@@ -45,22 +51,29 @@ export default function CurriculumLearningPage({
 
   useEffect(() => {
     // Load curriculum from localStorage
-    const stored = localStorage.getItem("curriculum");
+    const stored = localStorage.getItem(CURRICULUM_KEY);
     if (stored) {
-      const data = JSON.parse(stored);
+      const data = JSON.parse(stored) as Curriculum;
       setCurriculum(data);
 
-      // Initialize messages for this day
+      // Load saved messages for this day
+      const dayMessagesStore = JSON.parse(localStorage.getItem(DAY_MESSAGES_KEY) || "{}") as DayMessages;
       const currentDay = data.schedule[currentDayIndex];
+
       if (currentDay) {
-        setMessages([
-          {
+        if (dayMessagesStore[currentDay.day] && dayMessagesStore[currentDay.day].length > 0) {
+          // Load saved messages
+          setMessages(dayMessagesStore[currentDay.day]);
+        } else {
+          // Initialize with greeting message
+          const initialMessage: Message = {
             id: "1",
             role: "assistant",
             content: `📚 Day ${currentDay.day}: ${currentDay.topic}\n\n당신의 오늘의 학습 목표는 "${currentDay.topic}"입니다. 자유롭게 질문하며 학습해보세요!`,
-            timestamp: new Date(),
-          },
-        ]);
+            timestamp: new Date().toISOString(),
+          };
+          setMessages([initialMessage]);
+        }
       }
     }
   }, []);
@@ -73,6 +86,18 @@ export default function CurriculumLearningPage({
     scrollToBottom();
   }, [messages]);
 
+  // Save messages to localStorage when they change
+  useEffect(() => {
+    if (!curriculum) return;
+
+    const currentDay = curriculum.schedule[currentDayIndex];
+    if (!currentDay) return;
+
+    const dayMessagesStore = JSON.parse(localStorage.getItem(DAY_MESSAGES_KEY) || "{}") as DayMessages;
+    dayMessagesStore[currentDay.day] = messages;
+    localStorage.setItem(DAY_MESSAGES_KEY, JSON.stringify(dayMessagesStore));
+  }, [messages, curriculum, currentDayIndex]);
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || loading || !curriculum) return;
@@ -81,7 +106,7 @@ export default function CurriculumLearningPage({
       id: Date.now().toString(),
       role: "user",
       content: input,
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
     };
 
     setMessages((prev) => [...prev, userMessage]);
@@ -105,7 +130,7 @@ export default function CurriculumLearningPage({
         role: "assistant",
         content: response.data.answer,
         sources: response.data.sources,
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
@@ -115,7 +140,7 @@ export default function CurriculumLearningPage({
         id: Date.now().toString(),
         role: "assistant",
         content: "죄송합니다. 응답 생성 중 오류가 발생했습니다. 다시 시도해주세요.",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
@@ -128,20 +153,20 @@ export default function CurriculumLearningPage({
 
     const updated = { ...curriculum };
     updated.schedule[currentDayIndex].completed = true;
-    localStorage.setItem("curriculum", JSON.stringify(updated));
+    localStorage.setItem(CURRICULUM_KEY, JSON.stringify(updated));
     setCurriculum(updated);
 
     // Move to next day
     if (currentDayIndex < curriculum.schedule.length - 1) {
       setCurrentDayIndex(currentDayIndex + 1);
-      setMessages([
-        {
-          id: "1",
-          role: "assistant",
-          content: `📚 Day ${updated.schedule[currentDayIndex + 1].day}: ${updated.schedule[currentDayIndex + 1].topic}\n\n다음 학습 주제입니다. 자유롭게 질문하며 학습해보세요!`,
-          timestamp: new Date(),
-        },
-      ]);
+      const nextDay = updated.schedule[currentDayIndex + 1];
+      const initialMessage: Message = {
+        id: "1",
+        role: "assistant",
+        content: `📚 Day ${nextDay.day}: ${nextDay.topic}\n\n다음 학습 주제입니다. 자유롭게 질문하며 학습해보세요!`,
+        timestamp: new Date().toISOString(),
+      };
+      setMessages([initialMessage]);
     }
   };
 
@@ -293,14 +318,18 @@ export default function CurriculumLearningPage({
               onClick={() => {
                 setCurrentDayIndex(currentDayIndex + 1);
                 const nextDay = curriculum.schedule[currentDayIndex + 1];
-                setMessages([
-                  {
+                const dayMessagesStore = JSON.parse(localStorage.getItem(DAY_MESSAGES_KEY) || "{}") as DayMessages;
+                if (dayMessagesStore[nextDay.day] && dayMessagesStore[nextDay.day].length > 0) {
+                  setMessages(dayMessagesStore[nextDay.day]);
+                } else {
+                  const initialMessage: Message = {
                     id: "1",
                     role: "assistant",
                     content: `📚 Day ${nextDay.day}: ${nextDay.topic}\n\n다음 학습 주제입니다. 자유롭게 질문하며 학습해보세요!`,
-                    timestamp: new Date(),
-                  },
-                ]);
+                    timestamp: new Date().toISOString(),
+                  };
+                  setMessages([initialMessage]);
+                }
               }}
               className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
             >

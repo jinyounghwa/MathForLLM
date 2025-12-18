@@ -1,8 +1,8 @@
 import * as fs from "fs/promises";
 import * as path from "path";
 import { v4 as uuidv4 } from "uuid";
-import { initializeVectorDB, indexDocuments } from "../services/vectordb";
-import { generateEmbedding } from "../services/llm";
+import { initializeVectorDB, indexDocuments } from "../services/vectordb.js";
+import { generateEmbedding } from "../services/llm.js";
 
 interface DocumentChunk {
   id: string;
