@@ -4,6 +4,13 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Send, ArrowLeft, Loader, MessageCircle, CheckCircle2 } from "lucide-react";
 import axios from "axios";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import "katex/dist/katex.min.css";
 
 interface Message {
   id: string;
@@ -172,8 +179,8 @@ export default function CurriculumLearningPage({
 
   if (!curriculum) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        <p className="text-gray-600">학습 계획을 로드하는 중...</p>
+      <div className="h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-primary-50">
+        <p className="text-slate-600">학습 계획을 로드하는 중...</p>
       </div>
     );
   }
@@ -184,22 +191,22 @@ export default function CurriculumLearningPage({
   );
 
   return (
-    <div className="h-screen flex flex-col bg-white">
+    <div className="h-screen flex flex-col bg-gradient-to-br from-slate-50 to-primary-50">
       {/* Header */}
-      <div className="border-b border-gray-200 bg-white sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="border-b border-slate-200 bg-white/70 backdrop-blur-md sticky top-0 z-10">
+        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 text-slate-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all duration-300"
             >
-              <ArrowLeft className="w-5 h-5 text-gray-600" />
+              <ArrowLeft className="w-5 h-5" />
             </Link>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">
+              <h1 className="text-xl font-display font-bold text-slate-900">
                 Day {currentDay.day}: {currentDay.topic}
               </h1>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-slate-600">
                 예상 학습 시간: {currentDay.estimatedTime}분
               </p>
             </div>
@@ -209,20 +216,20 @@ export default function CurriculumLearningPage({
           <div className="flex gap-2">
             <button
               onClick={() => setAnswerMode("normal")}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
                 answerMode === "normal"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  ? "bg-primary-600 text-white shadow-md"
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
             >
               일반 모드
             </button>
             <button
               onClick={() => setAnswerMode("roleplay")}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
                 answerMode === "roleplay"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  ? "bg-accent-600 text-white shadow-md"
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
             >
               역할극 모드
@@ -231,14 +238,14 @@ export default function CurriculumLearningPage({
         </div>
 
         {/* Progress Bar */}
-        <div className="max-w-4xl mx-auto px-4 pb-4">
+        <div className="max-w-5xl mx-auto px-4 pb-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">진행률</span>
-            <span className="text-sm text-gray-600">{progress}%</span>
+            <span className="text-sm font-medium text-slate-700">진행률</span>
+            <span className="text-sm text-slate-600">{progress}%</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
             <div
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              className="bg-gradient-to-r from-primary-500 to-primary-600 h-2 rounded-full transition-all duration-300"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
@@ -247,7 +254,7 @@ export default function CurriculumLearningPage({
 
       {/* Messages Container */}
       <div className="flex-1 overflow-y-auto">
-        <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+        <div className="max-w-5xl mx-auto px-4 py-6 space-y-6">
           {messages.map((message) => (
             <div
               key={message.id}
@@ -256,25 +263,128 @@ export default function CurriculumLearningPage({
               }`}
             >
               {message.role === "assistant" && (
-                <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
-                  <MessageCircle className="w-4 h-4 text-indigo-600" />
+                <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
+                  <MessageCircle className="w-4 h-4 text-primary-600" />
                 </div>
               )}
               <div
                 className={`max-w-2xl rounded-lg p-4 ${
                   message.role === "user"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-100 text-gray-900"
+                    ? "bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-md"
+                    : "bg-white text-slate-900 border border-slate-200 shadow-base prose prose-sm max-w-none"
                 }`}
               >
-                <p className="text-sm sm:text-base whitespace-pre-wrap">
-                  {message.content}
-                </p>
+                {message.role === "user" ? (
+                  <p className="text-sm sm:text-base whitespace-pre-wrap">
+                    {message.content}
+                  </p>
+                ) : (
+                  <div className="text-slate-900 leading-relaxed">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm, remarkMath]}
+                      rehypePlugins={[rehypeKatex]}
+                      components={{
+                        code: ({ node, inline, className, children, ...props }: any) => {
+                          const match = /language-(\w+)/.exec(className || "");
+                          return !inline && match ? (
+                            <SyntaxHighlighter
+                              style={oneDark}
+                              language={match[1]}
+                              PreTag="div"
+                              className="rounded-lg"
+                              customStyle={{
+                                margin: "1.25rem 0",
+                                padding: "1rem",
+                                fontSize: "0.875rem",
+                                lineHeight: "1.5",
+                              }}
+                              {...props}
+                            >
+                              {String(children).replace(/\n$/, "")}
+                            </SyntaxHighlighter>
+                          ) : (
+                            <code
+                              className="bg-slate-100 text-primary-700 px-2 py-1 rounded text-xs font-mono"
+                              {...props}
+                            >
+                              {children}
+                            </code>
+                          );
+                        },
+                        table: ({ node, ...props }: any) => (
+                          <table
+                            className="border-collapse w-full text-sm"
+                            style={{
+                              marginTop: "1.25rem",
+                              marginBottom: "1.25rem",
+                            }}
+                            {...props}
+                          />
+                        ),
+                        thead: ({ node, ...props }: any) => (
+                          <thead
+                            style={{
+                              backgroundColor: "#f3f4f6",
+                            }}
+                            {...props}
+                          />
+                        ),
+                        th: ({ node, ...props }: any) => (
+                          <th
+                            className="border border-slate-300 px-3 py-2 text-left font-semibold text-slate-900"
+                            {...props}
+                          />
+                        ),
+                        td: ({ node, ...props }: any) => (
+                          <td className="border border-slate-300 px-3 py-2" {...props} />
+                        ),
+                        h1: ({ node, ...props }: any) => (
+                          <h1 className="text-2xl font-display font-bold text-slate-900" {...props} />
+                        ),
+                        h2: ({ node, ...props }: any) => (
+                          <h2 className="text-xl font-display font-bold text-slate-900" {...props} />
+                        ),
+                        h3: ({ node, ...props }: any) => (
+                          <h3 className="text-lg font-display font-bold text-slate-900" {...props} />
+                        ),
+                        h4: ({ node, ...props }: any) => (
+                          <h4 className="text-base font-display font-bold text-slate-900" {...props} />
+                        ),
+                        ul: ({ node, ...props }: any) => (
+                          <ul className="list-disc list-outside pl-6 text-slate-800" {...props} />
+                        ),
+                        ol: ({ node, ...props }: any) => (
+                          <ol className="list-decimal list-outside pl-6 text-slate-800" {...props} />
+                        ),
+                        li: ({ node, ...props }: any) => (
+                          <li className="mb-2 leading-relaxed" {...props} />
+                        ),
+                        blockquote: ({ node, ...props }: any) => (
+                          <blockquote
+                            className="border-l-4 border-primary-500 pl-4 italic text-slate-700"
+                            {...props}
+                          />
+                        ),
+                        a: ({ node, ...props }: any) => (
+                          <a className="text-primary-600 underline hover:text-primary-700 transition-colors" {...props} />
+                        ),
+                        p: ({ node, ...props }: any) => (
+                          <p className="text-slate-900 leading-relaxed" {...props} />
+                        ),
+                        hr: ({ node, ...props }: any) => (
+                          <hr className="border-0 border-t border-slate-300 my-6" {...props} />
+                        ),
+                      }}
+                    >
+                      {message.content}
+                    </ReactMarkdown>
+                  </div>
+                )}
                 {message.sources && message.sources.length > 0 && (
-                  <div className="mt-3 pt-3 border-t border-gray-300 text-xs text-gray-600">
+                  <div className={`mt-3 pt-3 border-t text-xs ${message.role === "user" ? "border-emerald-400 text-emerald-100" : "border-slate-200 text-slate-600"}`}>
                     <p className="font-semibold mb-1">📚 참고 자료:</p>
                     {message.sources.map((source, idx) => (
-                      <div key={idx} className="text-gray-600">
+                      <div key={idx} className={message.role === "user" ? "text-emerald-100" : "text-slate-600"}>
                         {source.file} - {source.section}
                       </div>
                     ))}
@@ -285,14 +395,14 @@ export default function CurriculumLearningPage({
           ))}
           {loading && (
             <div className="flex gap-4 justify-start">
-              <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
-                <Loader className="w-4 h-4 text-indigo-600 animate-spin" />
+              <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
+                <Loader className="w-4 h-4 text-primary-600 animate-spin" />
               </div>
-              <div className="bg-gray-100 rounded-lg p-4">
+              <div className="bg-white rounded-lg p-4 border border-slate-200 shadow-base">
                 <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></div>
+                  <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-primary-500 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
+                  <div className="w-2 h-2 bg-primary-600 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
                 </div>
               </div>
             </div>
@@ -302,12 +412,12 @@ export default function CurriculumLearningPage({
       </div>
 
       {/* Input Area */}
-      <div className="border-t border-gray-200 bg-white sticky bottom-0">
-        <div className="max-w-4xl mx-auto px-4 py-4 space-y-3">
+      <div className="border-t border-slate-200 bg-white/70 backdrop-blur-md sticky bottom-0">
+        <div className="max-w-5xl mx-auto px-4 py-4 space-y-3">
           {!currentDay.completed && (
             <button
               onClick={handleCompleteDay}
-              className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center justify-center gap-2"
+              className="w-full px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 font-medium flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
             >
               <CheckCircle2 className="w-5 h-5" />
               학습 완료하기
@@ -331,7 +441,7 @@ export default function CurriculumLearningPage({
                   setMessages([initialMessage]);
                 }
               }}
-              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              className="w-full px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-lg hover:from-primary-700 hover:to-primary-800 transition-all duration-300 font-medium shadow-md hover:shadow-lg"
             >
               다음 학습하기
             </button>
@@ -342,13 +452,13 @@ export default function CurriculumLearningPage({
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="질문을 입력하세요..."
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-4 py-2 border-2 border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 bg-white transition-all duration-300"
               disabled={loading || currentDay.completed}
             />
             <button
               type="submit"
               disabled={loading || !input.trim() || currentDay.completed}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 bg-gradient-to-br from-primary-600 to-primary-700 text-white rounded-lg hover:from-primary-700 hover:to-primary-800 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed transition-all duration-300 shadow-md hover:shadow-lg"
             >
               <Send className="w-5 h-5" />
             </button>

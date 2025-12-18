@@ -104,10 +104,10 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
+      <div className="h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-primary-50 to-slate-100">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">통계를 불러오는 중...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-slate-600">통계를 불러오는 중...</p>
         </div>
       </div>
     );
@@ -115,12 +115,12 @@ export default function DashboardPage() {
 
   if (error || !stats) {
     return (
-      <div className="h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
+      <div className="h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-primary-50 to-slate-100">
         <div className="text-center">
           <p className="text-red-600 mb-4">{error || "통계를 불러올 수 없습니다"}</p>
           <Link
             href="/"
-            className="text-blue-600 hover:text-blue-700 font-medium"
+            className="text-primary-600 hover:text-primary-700 font-medium"
           >
             홈으로 돌아가기
           </Link>
@@ -130,17 +130,17 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-primary-50 to-slate-100">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <div className="bg-white/70 backdrop-blur-md border-b border-slate-200 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-4">
           <Link
             href="/"
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 text-slate-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all duration-300"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
+            <ArrowLeft className="w-5 h-5" />
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900">학습 대시보드</h1>
+          <h1 className="text-2xl font-display font-bold text-slate-900">학습 대시보드</h1>
         </div>
       </div>
 
@@ -149,51 +149,51 @@ export default function DashboardPage() {
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {/* Total Learning Time */}
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-base border border-slate-200 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-gray-600">총 학습 시간</h3>
-              <Clock className="w-5 h-5 text-blue-600" />
+              <h3 className="text-sm font-medium text-slate-600">총 학습 시간</h3>
+              <Clock className="w-5 h-5 text-primary-600" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">
+            <p className="text-2xl font-bold text-slate-900">
               {formatTime(stats.totalLearningTime)}
             </p>
-            <p className="text-xs text-gray-500 mt-2">
+            <p className="text-xs text-slate-500 mt-2">
               {stats.session.totalSessions}개 세션
             </p>
           </div>
 
           {/* Learning Streak */}
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-base border border-slate-200 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-gray-600">연속 학습 일수</h3>
-              <Flame className="w-5 h-5 text-orange-600" />
+              <h3 className="text-sm font-medium text-slate-600">연속 학습 일수</h3>
+              <Flame className="w-5 h-5 text-accent-600" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">{stats.streak}</p>
-            <p className="text-xs text-gray-500 mt-2">일</p>
+            <p className="text-2xl font-bold text-slate-900">{stats.streak}</p>
+            <p className="text-xs text-slate-500 mt-2">일</p>
           </div>
 
           {/* Total Messages */}
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-base border border-slate-200 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-gray-600">총 메시지</h3>
-              <TrendingUp className="w-5 h-5 text-green-600" />
+              <h3 className="text-sm font-medium text-slate-600">총 메시지</h3>
+              <TrendingUp className="w-5 h-5 text-emerald-600" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">
+            <p className="text-2xl font-bold text-slate-900">
               {stats.session.totalMessages}
             </p>
-            <p className="text-xs text-gray-500 mt-2">평균 {Math.round(stats.session.totalMessages / stats.session.totalSessions)}개/세션</p>
+            <p className="text-xs text-slate-500 mt-2">평균 {Math.round(stats.session.totalMessages / stats.session.totalSessions)}개/세션</p>
           </div>
 
           {/* Curriculum Progress */}
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-base border border-slate-200 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-gray-600">커리큘럼 진도</h3>
-              <Target className="w-5 h-5 text-indigo-600" />
+              <h3 className="text-sm font-medium text-slate-600">커리큘럼 진도</h3>
+              <Target className="w-5 h-5 text-primary-600" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">
+            <p className="text-2xl font-bold text-slate-900">
               {stats.curriculum.completionPercentage}%
             </p>
-            <p className="text-xs text-gray-500 mt-2">
+            <p className="text-xs text-slate-500 mt-2">
               {stats.curriculum.completedDays}/{stats.curriculum.totalDays}일
             </p>
           </div>
@@ -202,9 +202,9 @@ export default function DashboardPage() {
         {/* Session Analytics & Curriculum Progress */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Session Analytics */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-blue-600" />
+          <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-base border border-slate-200 p-6">
+            <h2 className="text-lg font-display font-bold text-slate-900 mb-6 flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-primary-600" />
               질문 모드 분석
             </h2>
 
@@ -212,16 +212,16 @@ export default function DashboardPage() {
               {/* Normal Mode */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-slate-700">
                     일반 모드
                   </span>
-                  <span className="text-sm font-bold text-gray-900">
+                  <span className="text-sm font-bold text-slate-900">
                     {stats.session.modes.normal}회
                   </span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
                   <div
-                    className="bg-blue-600 h-2 rounded-full transition-all"
+                    className="bg-primary-600 h-2 rounded-full transition-all"
                     style={{
                       width: `${
                         stats.session.totalSessions > 0
@@ -236,16 +236,16 @@ export default function DashboardPage() {
               {/* Roleplay Mode */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-slate-700">
                     역할극 모드
                   </span>
-                  <span className="text-sm font-bold text-gray-900">
+                  <span className="text-sm font-bold text-slate-900">
                     {stats.session.modes.roleplay}회
                   </span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
                   <div
-                    className="bg-indigo-600 h-2 rounded-full transition-all"
+                    className="bg-accent-600 h-2 rounded-full transition-all"
                     style={{
                       width: `${
                         stats.session.totalSessions > 0
@@ -258,21 +258,21 @@ export default function DashboardPage() {
               </div>
 
               {/* Session Duration */}
-              <div className="pt-4 border-t border-gray-200">
-                <p className="text-sm text-gray-600">
-                  평균 세션 시간: <span className="font-bold text-gray-900">{stats.session.averageSessionDuration}분</span>
+              <div className="pt-4 border-t border-slate-200">
+                <p className="text-sm text-slate-600">
+                  평균 세션 시간: <span className="font-bold text-slate-900">{stats.session.averageSessionDuration}분</span>
                 </p>
-                <p className="text-sm text-gray-600 mt-2">
-                  마지막 학습: <span className="font-bold text-gray-900">{formatDate(stats.session.lastSessionDate)}</span>
+                <p className="text-sm text-slate-600 mt-2">
+                  마지막 학습: <span className="font-bold text-slate-900">{formatDate(stats.session.lastSessionDate)}</span>
                 </p>
               </div>
             </div>
           </div>
 
           {/* Curriculum Progress */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-              <Target className="w-5 h-5 text-indigo-600" />
+          <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-base border border-slate-200 p-6">
+            <h2 className="text-lg font-display font-bold text-slate-900 mb-6 flex items-center gap-2">
+              <Target className="w-5 h-5 text-primary-600" />
               학습 계획 진행률
             </h2>
 
@@ -280,16 +280,16 @@ export default function DashboardPage() {
               {/* Main Progress Bar */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-slate-700">
                     전체 진도
                   </span>
-                  <span className="text-sm font-bold text-gray-900">
+                  <span className="text-sm font-bold text-slate-900">
                     {stats.curriculum.completionPercentage}%
                   </span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-4">
+                <div className="w-full bg-slate-200 rounded-full h-4 overflow-hidden">
                   <div
-                    className="bg-gradient-to-r from-blue-500 to-indigo-600 h-4 rounded-full transition-all"
+                    className="bg-gradient-to-r from-primary-500 to-primary-600 h-4 rounded-full transition-all"
                     style={{
                       width: `${stats.curriculum.completionPercentage}%`,
                     }}
@@ -298,28 +298,28 @@ export default function DashboardPage() {
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-200">
                 <div>
-                  <p className="text-xs text-gray-600">완료한 일차</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-xs text-slate-600">완료한 일차</p>
+                  <p className="text-2xl font-bold text-slate-900">
                     {stats.curriculum.completedDays}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-600">총 일차</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-xs text-slate-600">총 일차</p>
+                  <p className="text-2xl font-bold text-slate-900">
                     {stats.curriculum.totalDays}
                   </p>
                 </div>
                 <div className="col-span-2">
-                  <p className="text-xs text-gray-600">평균 완료 시간</p>
-                  <p className="text-sm font-bold text-gray-900 mt-1">
+                  <p className="text-xs text-slate-600">평균 완료 시간</p>
+                  <p className="text-sm font-bold text-slate-900 mt-1">
                     {formatTime(stats.curriculum.averageCompletionTime)}
                   </p>
                 </div>
                 <div className="col-span-2">
-                  <p className="text-xs text-gray-600">마지막 학습</p>
-                  <p className="text-sm font-bold text-gray-900 mt-1">
+                  <p className="text-xs text-slate-600">마지막 학습</p>
+                  <p className="text-sm font-bold text-slate-900 mt-1">
                     {formatDate(stats.curriculum.lastLearningDate)}
                   </p>
                 </div>
@@ -330,28 +330,28 @@ export default function DashboardPage() {
 
         {/* Top Topics */}
         {stats.topTopics.length > 0 && (
-          <div className="bg-white rounded-lg shadow p-6 mb-8">
-            <h2 className="text-lg font-bold text-gray-900 mb-6">
+          <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-base border border-slate-200 p-6 mb-8">
+            <h2 className="text-lg font-display font-bold text-slate-900 mb-6">
               자주 학습한 주제
             </h2>
 
             <div className="space-y-3">
               {stats.topTopics.slice(0, 8).map((topic, idx) => (
-                <div key={idx} className="flex items-center justify-between pb-3 border-b border-gray-100 last:border-b-0">
+                <div key={idx} className="flex items-center justify-between pb-3 border-b border-slate-200 last:border-b-0">
                   <div className="flex items-center gap-3 flex-1">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 text-sm font-bold">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-100 text-primary-600 text-sm font-bold">
                       {idx + 1}
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">{topic.topic}</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="font-medium text-slate-900">{topic.topic}</p>
+                      <p className="text-xs text-slate-500">
                         마지막: {formatDate(topic.lastAsked)}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-gray-900">{topic.frequency}</p>
-                    <p className="text-xs text-gray-500">회</p>
+                    <p className="font-bold text-slate-900">{topic.frequency}</p>
+                    <p className="text-xs text-slate-500">회</p>
                   </div>
                 </div>
               ))}
@@ -360,23 +360,23 @@ export default function DashboardPage() {
         )}
 
         {/* Summary Card */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow p-6 text-white">
-          <h2 className="text-lg font-bold mb-4">학습 요약</h2>
+        <div className="bg-gradient-to-br from-primary-600 to-primary-800 rounded-2xl shadow-lg p-6 text-white border border-primary-500">
+          <h2 className="text-lg font-display font-bold mb-4">학습 요약</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <p className="text-blue-100 text-sm">가입일</p>
+              <p className="text-primary-100 text-sm">가입일</p>
               <p className="font-bold text-lg mt-1">
                 {new Date(stats.joinDate).toLocaleDateString("ko-KR")}
               </p>
             </div>
             <div>
-              <p className="text-blue-100 text-sm">총 학습 세션</p>
+              <p className="text-primary-100 text-sm">총 학습 세션</p>
               <p className="font-bold text-lg mt-1">
                 {stats.session.totalSessions}회
               </p>
             </div>
             <div>
-              <p className="text-blue-100 text-sm">평가</p>
+              <p className="text-primary-100 text-sm">평가</p>
               <p className="font-bold text-lg mt-1">
                 {stats.totalLearningTime > 300
                   ? "⭐⭐⭐⭐⭐ 뛰어남"

@@ -84,25 +84,28 @@ export default function CurriculumSetupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-primary-50 to-slate-100">
       <div className="max-w-2xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center gap-3 mb-8">
           <Link
             href="/"
-            className="p-2 hover:bg-white rounded-lg transition-colors"
+            className="p-2 text-slate-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all duration-300"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
+            <ArrowLeft className="w-5 h-5" />
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">학습 계획 설정</h1>
+          <div>
+            <h1 className="text-3xl font-display font-bold text-slate-900">학습 계획 설정</h1>
+            <p className="text-sm text-slate-600 mt-1">맞춤형 학습 경로를 만들어보세요</p>
+          </div>
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-xl shadow-lg p-8">
+        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-base border border-slate-200 p-8">
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Learning Frequency */}
             <div>
-              <label className="block text-lg font-semibold text-gray-900 mb-4">
+              <label className="block text-lg font-display font-semibold text-slate-900 mb-4">
                 📅 학습 주기
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -123,10 +126,10 @@ export default function CurriculumSetupPage() {
                       className="sr-only"
                     />
                     <div
-                      className={`p-3 rounded-lg border-2 transition-colors text-center font-medium ${
+                      className={`p-3 rounded-lg border-2 transition-all duration-300 text-center font-medium ${
                         frequency === freq
-                          ? "border-amber-600 bg-amber-50 text-amber-900"
-                          : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
+                          ? "border-primary-600 bg-primary-50 text-primary-900 shadow-md"
+                          : "border-slate-200 bg-white text-slate-700 hover:border-primary-300"
                       }`}
                     >
                       {freq === 1
@@ -144,7 +147,7 @@ export default function CurriculumSetupPage() {
 
             {/* Learning Duration */}
             <div>
-              <label className="block text-lg font-semibold text-gray-900 mb-4">
+              <label className="block text-lg font-display font-semibold text-slate-900 mb-4">
                 ⏱️ 학습 시간
               </label>
               <div className="grid grid-cols-3 gap-3">
@@ -165,10 +168,10 @@ export default function CurriculumSetupPage() {
                       className="sr-only"
                     />
                     <div
-                      className={`p-3 rounded-lg border-2 transition-colors text-center font-medium ${
+                      className={`p-3 rounded-lg border-2 transition-all duration-300 text-center font-medium ${
                         duration === dur
-                          ? "border-amber-600 bg-amber-50 text-amber-900"
-                          : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
+                          ? "border-primary-600 bg-primary-50 text-primary-900 shadow-md"
+                          : "border-slate-200 bg-white text-slate-700 hover:border-primary-300"
                       }`}
                     >
                       {dur === 30 ? "30분" : dur === 60 ? "1시간" : "2시간"}
@@ -180,7 +183,7 @@ export default function CurriculumSetupPage() {
 
             {/* Start Date */}
             <div>
-              <label className="block text-lg font-semibold text-gray-900 mb-4">
+              <label className="block text-lg font-display font-semibold text-slate-900 mb-4">
                 📆 시작일
               </label>
               <input
@@ -190,23 +193,23 @@ export default function CurriculumSetupPage() {
                   setStartDate(e.target.value);
                   calculatePreview();
                 }}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 bg-white transition-all duration-300"
               />
             </div>
 
             {/* Preview */}
-            <div className="bg-amber-50 rounded-lg p-6 border border-amber-200">
-              <h3 className="font-semibold text-gray-900 mb-3">📊 예상 일정</h3>
-              <div className="space-y-2 text-sm text-gray-700">
+            <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl p-6 border border-primary-200">
+              <h3 className="font-semibold text-slate-900 mb-3 text-lg">📊 예상 일정</h3>
+              <div className="space-y-2 text-sm text-slate-700">
                 <p>
-                  • <strong>총 예상 기간:</strong> {preview.totalDays}일
+                  • <strong className="text-primary-700">총 예상 기간:</strong> {preview.totalDays}일
                 </p>
                 <p>
-                  • <strong>학습일 수:</strong> 약{" "}
+                  • <strong className="text-primary-700">학습일 수:</strong> 약{" "}
                   {Math.ceil(preview.totalDays / frequency)}일
                 </p>
                 <p>
-                  • <strong>완료 예정:</strong> {preview.completionDate}
+                  • <strong className="text-primary-700">완료 예정:</strong> {preview.completionDate}
                 </p>
               </div>
             </div>
@@ -221,7 +224,7 @@ export default function CurriculumSetupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-6 py-3 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+              className="w-full px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl font-semibold hover:from-primary-700 hover:to-primary-800 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -235,7 +238,7 @@ export default function CurriculumSetupPage() {
 
             {/* 로딩 안내 */}
             {!loading && (
-              <div className="text-center text-sm text-gray-600">
+              <div className="text-center text-sm text-slate-600">
                 💡 학습 계획 생성은 10~30초 정도 소요될 수 있습니다.
               </div>
             )}
@@ -243,9 +246,9 @@ export default function CurriculumSetupPage() {
         </div>
 
         {/* Info */}
-        <div className="mt-8 bg-blue-50 rounded-lg p-6 border border-blue-200">
-          <h3 className="font-semibold text-blue-900 mb-2">💡 팁</h3>
-          <p className="text-sm text-blue-800">
+        <div className="mt-8 bg-emerald-50 rounded-xl p-6 border border-emerald-200">
+          <h3 className="font-semibold text-emerald-900 mb-2">💡 팁</h3>
+          <p className="text-sm text-emerald-800">
             • 충분한 학습 시간을 확보할 수 있는 주기를 선택하세요.
             <br />• 하루 1시간 학습을 기준으로 설정되었습니다.
             <br />• 중도에 변경 가능합니다.
@@ -260,9 +263,9 @@ export default function CurriculumSetupPage() {
             <div className="text-center">
               <div className="flex justify-center mb-6">
                 <div className="relative w-16 h-16">
-                  <div className="absolute inset-0 rounded-full border-4 border-gray-200"></div>
+                  <div className="absolute inset-0 rounded-full border-4 border-slate-200"></div>
                   <div
-                    className="absolute inset-0 rounded-full border-4 border-transparent border-t-amber-600 border-r-amber-600 animate-spin"
+                    className="absolute inset-0 rounded-full border-4 border-transparent border-t-primary-600 border-r-primary-600 animate-spin"
                     style={{
                       animation: "spin 1s linear infinite",
                     }}
@@ -270,10 +273,10 @@ export default function CurriculumSetupPage() {
                 </div>
               </div>
 
-              <h2 className="text-xl font-bold text-gray-900 mb-2">
+              <h2 className="text-xl font-display font-bold text-slate-900 mb-2">
                 학습 계획 생성 중
               </h2>
-              <p className="text-gray-600 mb-6 text-sm">
+              <p className="text-slate-600 mb-6 text-sm">
                 AI 기반 맞춤형 커리큘럼을 생성하고 있습니다.
                 <br />
                 잠시만 기다려주세요...
@@ -281,23 +284,23 @@ export default function CurriculumSetupPage() {
 
               {/* 프로그래스 바 */}
               <div className="mb-6">
-                <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
                   <div
-                    className="bg-gradient-to-r from-amber-500 to-amber-600 h-full rounded-full transition-all duration-300"
+                    className="bg-gradient-to-r from-primary-500 to-primary-600 h-full rounded-full transition-all duration-300"
                     style={{ width: `${Math.min(progress, 100)}%` }}
                   ></div>
                 </div>
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-slate-500 mt-2">
                   {Math.round(Math.min(progress, 100))}% 완료
                 </p>
               </div>
 
               {/* 로딩 팁 */}
-              <div className="bg-blue-50 rounded-lg p-4 text-sm text-blue-800 border border-blue-200">
+              <div className="bg-primary-50 rounded-lg p-4 text-sm text-primary-800 border border-primary-200">
                 <p>
                   ⏱️ 이 작업은 보통 <strong>10~30초</strong> 정도 소요됩니다.
                 </p>
-                <p className="mt-2 text-xs text-blue-600">
+                <p className="mt-2 text-xs text-primary-600">
                   더 빨리 처리되거나 오래 걸릴 수 있습니다.
                 </p>
               </div>

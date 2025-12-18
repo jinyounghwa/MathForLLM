@@ -38,7 +38,7 @@ const AIAvatar = () => (
   <motion.div
     initial={{ scale: 0 }}
     animate={{ scale: 1 }}
-    className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0 shadow-lg"
+    className="w-9 h-9 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center flex-shrink-0 shadow-md"
   >
     <span className="text-lg">🤖</span>
   </motion.div>
@@ -49,7 +49,7 @@ const UserAvatar = () => (
   <motion.div
     initial={{ scale: 0 }}
     animate={{ scale: 1 }}
-    className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center flex-shrink-0 shadow-lg"
+    className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center flex-shrink-0 shadow-md"
   >
     <span className="text-lg">👤</span>
   </motion.div>
@@ -194,43 +194,43 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="h-screen flex flex-col bg-gradient-to-br from-slate-50 via-primary-50 to-slate-50">
       {/* Header */}
       <motion.div
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="border-b border-slate-700 bg-gradient-to-r from-slate-800 via-slate-800 to-slate-800 sticky top-0 z-10 backdrop-blur-sm bg-opacity-80"
+        className="border-b border-slate-200 bg-white/70 backdrop-blur-md sticky top-0 z-10"
       >
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link
               href="/"
-              className="p-2 hover:bg-slate-700 rounded-lg transition-all hover:scale-110"
+              className="p-2 text-slate-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all duration-300 hover:scale-110"
             >
-              <ArrowLeft className="w-5 h-5 text-slate-300" />
+              <ArrowLeft className="w-5 h-5" />
             </Link>
             <div>
               <div className="flex items-center gap-2">
-                <Zap className="w-5 h-5 text-yellow-400" />
-                <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                  LLM 수학 튜터
+                <Zap className="w-5 h-5 text-primary-600" />
+                <h1 className="text-xl font-display font-bold text-slate-900">
+                  AI 수학 튜터
                 </h1>
               </div>
-              <p className="text-xs text-slate-400">세션: {sessionId.slice(-6)}</p>
+              <p className="text-xs text-slate-500">세션: {sessionId.slice(-6)}</p>
             </div>
           </div>
 
           {/* Mode Controls */}
           <div className="flex gap-2 items-center flex-wrap">
-            <div className="hidden sm:flex gap-1 bg-slate-700 rounded-lg p-1">
+            <div className="hidden sm:flex gap-1 bg-slate-100 rounded-lg p-1">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setAnswerMode("normal")}
                 className={`px-3 py-1.5 rounded transition-all text-sm font-medium ${
                   answerMode === "normal"
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-500/50"
-                    : "text-slate-300 hover:text-white"
+                    ? "bg-primary-600 text-white shadow-md"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 일반
@@ -241,18 +241,18 @@ export default function ChatPage() {
                 onClick={() => setAnswerMode("roleplay")}
                 className={`px-3 py-1.5 rounded transition-all text-sm font-medium ${
                   answerMode === "roleplay"
-                    ? "bg-purple-600 text-white shadow-lg shadow-purple-500/50"
-                    : "text-slate-300 hover:text-white"
+                    ? "bg-accent-600 text-white shadow-md"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 역할극
               </motion.button>
             </div>
             <motion.button
-              whileHover={{ scale: 1.1, rotate: 180 }}
+              whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={handleNewSession}
-              className="p-2 hover:bg-slate-700 rounded-lg transition-all text-slate-300 hover:text-red-400"
+              className="p-2 text-slate-600 hover:text-accent-600 hover:bg-accent-50 rounded-lg transition-all duration-300"
               title="새 세션"
             >
               <Trash2 className="w-5 h-5" />
@@ -281,10 +281,10 @@ export default function ChatPage() {
                   }`}
                 >
                   <div
-                    className={`rounded-2xl px-5 py-4 shadow-xl backdrop-blur-sm ${
+                    className={`rounded-2xl px-5 py-4 shadow-base backdrop-blur-sm ${
                       message.role === "user"
-                        ? "bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-br-none"
-                        : "bg-slate-700 text-slate-50 rounded-bl-none border border-slate-600"
+                        ? "bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-br-none shadow-md"
+                        : "bg-white text-slate-900 rounded-bl-none border border-slate-200"
                     }`}
                   >
                     {message.role === "user" ? (
@@ -292,7 +292,7 @@ export default function ChatPage() {
                         {message.content}
                       </p>
                     ) : (
-                      <div className="prose prose-sm prose-invert max-w-none text-slate-50 leading-relaxed">
+                      <div className="prose prose-sm max-w-none text-slate-900">
                         <ReactMarkdown
                           remarkPlugins={[remarkGfm, remarkMath]}
                           rehypePlugins={[rehypeKatex]}
@@ -304,14 +304,20 @@ export default function ChatPage() {
                                   style={oneDark}
                                   language={match[1]}
                                   PreTag="div"
-                                  className="rounded-lg my-2"
+                                  className="rounded-lg"
+                                  customStyle={{
+                                    margin: "1.25rem 0",
+                                    padding: "1rem",
+                                    fontSize: "0.875rem",
+                                    lineHeight: "1.5",
+                                  }}
                                   {...props}
                                 >
                                   {String(children).replace(/\n$/, "")}
                                 </SyntaxHighlighter>
                               ) : (
                                 <code
-                                  className="bg-slate-900 text-orange-300 px-2 py-1 rounded text-xs font-mono"
+                                  className="bg-slate-100 text-primary-700 px-2 py-1 rounded text-xs font-mono"
                                   {...props}
                                 >
                                   {children}
@@ -320,45 +326,66 @@ export default function ChatPage() {
                             },
                             table: ({ node, ...props }: any) => (
                               <table
-                                className="border-collapse border border-slate-500 w-full my-3 text-sm"
+                                className="border-collapse w-full text-sm"
+                                style={{
+                                  marginTop: "1.25rem",
+                                  marginBottom: "1.25rem",
+                                }}
+                                {...props}
+                              />
+                            ),
+                            thead: ({ node, ...props }: any) => (
+                              <thead
+                                style={{
+                                  backgroundColor: "#f3f4f6",
+                                }}
                                 {...props}
                               />
                             ),
                             th: ({ node, ...props }: any) => (
                               <th
-                                className="border border-slate-500 bg-slate-800 px-3 py-2 text-left font-semibold"
+                                className="border border-slate-300 px-3 py-2 text-left font-semibold text-slate-900"
                                 {...props}
                               />
                             ),
                             td: ({ node, ...props }: any) => (
-                              <td className="border border-slate-500 px-3 py-2" {...props} />
+                              <td className="border border-slate-300 px-3 py-2" {...props} />
                             ),
                             h1: ({ node, ...props }: any) => (
-                              <h1 className="text-2xl font-bold my-3" {...props} />
+                              <h1 className="text-2xl font-display font-bold text-slate-900" {...props} />
                             ),
                             h2: ({ node, ...props }: any) => (
-                              <h2 className="text-xl font-bold my-2" {...props} />
+                              <h2 className="text-xl font-display font-bold text-slate-900" {...props} />
                             ),
                             h3: ({ node, ...props }: any) => (
-                              <h3 className="text-lg font-bold my-2" {...props} />
+                              <h3 className="text-lg font-display font-bold text-slate-900" {...props} />
+                            ),
+                            h4: ({ node, ...props }: any) => (
+                              <h4 className="text-base font-display font-bold text-slate-900" {...props} />
                             ),
                             ul: ({ node, ...props }: any) => (
-                              <ul className="list-disc list-inside my-2 space-y-1 ml-2" {...props} />
+                              <ul className="list-disc list-outside pl-6 text-slate-800" {...props} />
                             ),
                             ol: ({ node, ...props }: any) => (
-                              <ol className="list-decimal list-inside my-2 space-y-1 ml-2" {...props} />
+                              <ol className="list-decimal list-outside pl-6 text-slate-800" {...props} />
+                            ),
+                            li: ({ node, ...props }: any) => (
+                              <li className="mb-2 leading-relaxed" {...props} />
                             ),
                             blockquote: ({ node, ...props }: any) => (
                               <blockquote
-                                className="border-l-4 border-blue-400 pl-4 italic my-2 text-slate-300"
+                                className="border-l-4 border-primary-500 pl-4 italic text-slate-700"
                                 {...props}
                               />
                             ),
                             a: ({ node, ...props }: any) => (
-                              <a className="text-blue-300 underline hover:text-blue-200" {...props} />
+                              <a className="text-primary-600 underline hover:text-primary-700 transition-colors" {...props} />
                             ),
                             p: ({ node, ...props }: any) => (
-                              <p className="my-2" {...props} />
+                              <p className="text-slate-900 leading-relaxed" {...props} />
+                            ),
+                            hr: ({ node, ...props }: any) => (
+                              <hr className="border-0 border-t border-slate-300 my-6" {...props} />
                             ),
                           }}
                         >
@@ -371,18 +398,18 @@ export default function ChatPage() {
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="mt-4 pt-4 border-t border-slate-600 text-xs text-slate-300"
+                        className="mt-4 pt-4 border-t border-slate-200 text-xs text-slate-600"
                       >
                         <div className="flex items-center gap-2 mb-2">
-                          <BookOpen className="w-4 h-4 text-yellow-400" />
-                          <span className="font-semibold">참고 자료</span>
+                          <BookOpen className="w-4 h-4 text-primary-600" />
+                          <span className="font-semibold text-slate-700">참고 자료</span>
                         </div>
                         <div className="space-y-1 ml-6">
                           {message.sources.map((source, idx) => (
-                            <div key={idx} className="text-slate-300 hover:text-blue-300 transition-colors">
-                              <span className="font-medium">{source.file}</span> →{" "}
-                              <span className="text-slate-400">{source.section}</span>
-                              <span className="text-slate-500">
+                            <div key={idx} className="text-slate-600 hover:text-primary-600 transition-colors">
+                              <span className="font-medium text-slate-700">{source.file}</span> →{" "}
+                              <span className="text-slate-500">{source.section}</span>
+                              <span className="text-slate-400">
                                 {" "}
                                 ({Math.round(source.relevance * 100)}%)
                               </span>
@@ -406,22 +433,22 @@ export default function ChatPage() {
               className="flex gap-3 justify-start"
             >
               <AIAvatar />
-              <div className="bg-slate-700 rounded-2xl rounded-bl-none px-5 py-4 shadow-xl border border-slate-600">
+              <div className="bg-white rounded-2xl rounded-bl-none px-5 py-4 shadow-base border border-slate-200">
                 <div className="flex gap-2">
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 0.6, repeat: Infinity }}
-                    className="w-2.5 h-2.5 bg-blue-400 rounded-full"
+                    className="w-2.5 h-2.5 bg-primary-400 rounded-full"
                   />
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
-                    className="w-2.5 h-2.5 bg-purple-400 rounded-full"
+                    className="w-2.5 h-2.5 bg-primary-500 rounded-full"
                   />
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
-                    className="w-2.5 h-2.5 bg-pink-400 rounded-full"
+                    className="w-2.5 h-2.5 bg-primary-600 rounded-full"
                   />
                 </div>
               </div>
@@ -436,9 +463,9 @@ export default function ChatPage() {
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="border-t border-slate-700 bg-gradient-to-t from-slate-900 via-slate-800 to-slate-800 sticky bottom-0 backdrop-blur-sm bg-opacity-80"
+        className="border-t border-slate-200 bg-white/70 backdrop-blur-md sticky bottom-0"
       >
-        <div className="max-w-5xl mx-auto px-4 py-6">
+        <div className="max-w-6xl mx-auto px-4 py-6">
           <form onSubmit={handleSendMessage} className="flex gap-3 items-end">
             <motion.textarea
               whileFocus={{ scale: 1.02 }}
@@ -455,7 +482,7 @@ export default function ChatPage() {
 (예: 벡터란 무엇인가요?)
 
 Shift+Enter: 줄바꿈 | Enter: 전송"
-              className="flex-1 px-6 py-5 text-base bg-slate-700 border-2 border-slate-600 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-50 placeholder-slate-400 transition-all shadow-lg hover:border-slate-500 resize-none min-h-[180px] max-h-[300px] leading-relaxed font-medium"
+              className="flex-1 px-6 py-5 text-base bg-white border-2 border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 placeholder-slate-500 transition-all shadow-base hover:border-slate-300 hover:shadow-md resize-none min-h-[180px] max-h-[300px] leading-relaxed font-medium"
               disabled={loading}
               rows={6}
             />
@@ -464,22 +491,22 @@ Shift+Enter: 줄바꿈 | Enter: 전송"
               whileTap={{ scale: 0.95 }}
               type="submit"
               disabled={loading || !input.trim()}
-              className="p-5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl hover:from-blue-700 hover:to-blue-800 disabled:from-slate-600 disabled:to-slate-600 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-blue-500/50 disabled:shadow-none flex-shrink-0 h-[180px] flex items-center justify-center"
+              className="p-5 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-2xl hover:from-emerald-600 hover:to-emerald-700 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg flex-shrink-0 h-[180px] flex items-center justify-center"
             >
               <Send className="w-7 h-7" />
             </motion.button>
           </form>
 
           {/* Mode Toggle for Mobile */}
-          <div className="sm:hidden mt-3 flex gap-2 bg-slate-700 rounded-lg p-1">
+          <div className="sm:hidden mt-3 flex gap-2 bg-slate-100 rounded-lg p-1">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setAnswerMode("normal")}
               className={`flex-1 px-3 py-2 rounded text-xs font-medium transition-all ${
                 answerMode === "normal"
-                  ? "bg-blue-600 text-white"
-                  : "text-slate-300 hover:text-white"
+                  ? "bg-primary-600 text-white"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
               일반
@@ -490,8 +517,8 @@ Shift+Enter: 줄바꿈 | Enter: 전송"
               onClick={() => setAnswerMode("roleplay")}
               className={`flex-1 px-3 py-2 rounded text-xs font-medium transition-all ${
                 answerMode === "roleplay"
-                  ? "bg-purple-600 text-white"
-                  : "text-slate-300 hover:text-white"
+                  ? "bg-accent-600 text-white"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
               역할극
@@ -508,11 +535,11 @@ Shift+Enter: 줄바꿈 | Enter: 전송"
           background: transparent;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(100, 116, 139, 0.5);
+          background: rgba(107, 126, 234, 0.3);
           border-radius: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(100, 116, 139, 0.8);
+          background: rgba(107, 126, 234, 0.5);
         }
       `}</style>
     </div>

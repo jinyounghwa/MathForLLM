@@ -1,28 +1,25 @@
 import { generateResponse, generateEmbedding } from "./llm.js";
 import { searchDocuments } from "./vectordb.js";
 
-const NORMAL_SYSTEM_PROMPT = `당신은 LLM/AI 수학 강사입니다. 간결하고 정확하게 답변하세요.
+const NORMAL_SYSTEM_PROMPT = `당신은 LLM/AI 개발을 위한 수학 강사입니다. 명확하고 정확한 설명을 제공하세요.
 
-형식:
-1) 정의 (1문장)
-2) 수식 (LaTeX)
-3) 예제
+답변 구조 (간결하게):
+1) 핵심 개념 - 정의와 직관적 이해
+2) 수학적 표현 - 주요 공식 (LaTeX)
+3) 구체적 예제 - 명확한 예시와 계산 과정
+4) 실무 연관성 - AI/LLM 분야 응용
 
-제약: 300자 이내, 직결한 설명만 제공`;
+원칙: 정확성, 명확한 수식, 구체적 예제. 적절한 길이로 설명 (600-800자)`;
 
-const ROLEPLAY_SYSTEM_PROMPT = `당신은 AI 개발 시뮬레이션 멘토입니다. 실무 상황에서 필요한 개념을 설명하세요.
+const ROLEPLAY_SYSTEM_PROMPT = `당신은 AI 개발팀의 경험 많은 멘토입니다. 실무 관점에서 수학 개념을 설명하세요.
 
-형식:
-【역할극】
-상황: (1줄 상황)
-역할: (1줄)
-미션: (1줄)
----
-개념 설명: (간결하게)
-적용: (예시)
-【종료】
+답변 구조:
+【실무 상황】 간단한 상황 설명 및 핵심 개념
+【수학 원리】 필요한 공식 및 수학적 기초
+【실제 적용】 코드 관점의 접근과 예제
+【주의사항】 흔한 실수와 최적화 팁
 
-제약: 500자 이내, 직결하고 실용적으로`;
+원칙: 실용적 설명, 이론과 실전 균형, 명확한 수식. 적절한 길이 (800-1000자)`;
 
 interface RAGResponse {
   answer: string;
@@ -46,27 +43,37 @@ export async function queryRAG(
     // Search for relevant documents
     const searchResults = await searchDocuments(userQuery, queryEmbedding, 3);
 
-    // Format context from search results
-    const context = searchResults
-      .map(
-        (result: any) =>
-          `[${result.metadata.source} - ${result.metadata.section}]\n${result.content}`
-      )
-      .join("\n\n");
+    // Filter results with minimum relevance threshold (0.7)
+    const relevantResults = searchResults.filter((result: any) => result.relevance >= 0.7);
+
+    // Format context from search results (or use empty context if no relevant results)
+    let context = "";
+    let sources: Array<{ file: string; section: string; relevance: number }> = [];
+
+    if (relevantResults.length > 0) {
+      context = relevantResults
+        .map(
+          (result: any) =>
+            `[${result.metadata.source} - ${result.metadata.section}]\n${result.content}`
+        )
+        .join("\n\n");
+
+      sources = relevantResults.map((result: any) => ({
+        file: result.metadata.source,
+        section: result.metadata.section,
+        relevance: result.relevance,
+      }));
+    } else {
+      // RAG miss - model will use its own knowledge
+      console.log(`RAG miss for query: "${userQuery}" - using model's own knowledge`);
+    }
 
     // Select system prompt based on mode
     const systemPrompt =
       mode === "roleplay" ? ROLEPLAY_SYSTEM_PROMPT : NORMAL_SYSTEM_PROMPT;
 
-    // Generate response using LLM
+    // Generate response using LLM (with or without context)
     const answer = await generateResponse(systemPrompt, userQuery, context, history);
-
-    // Format sources
-    const sources = searchResults.map((result: any) => ({
-      file: result.metadata.source,
-      section: result.metadata.section,
-      relevance: result.relevance,
-    }));
 
     // Generate suggested follow-up questions
     const suggestedQuestions = generateSuggestedQuestions(userQuery, answer);

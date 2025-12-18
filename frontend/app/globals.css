@@ -1,4 +1,34 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap");
+
 @import "tailwindcss";
+
+:root {
+  --font-display: "Geist", system-ui;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", system-ui, sans-serif;
+
+  /* Colors */
+  --color-primary: #6b7eea;
+  --color-primary-dark: #4f5fd4;
+  --color-accent: #ec6b47;
+  --color-accent-dark: #d94c28;
+  --color-emerald: #22c55e;
+  --color-dark: #0f1419;
+  --color-light: #f8f9fb;
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-base: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+  --spacing-2xl: 4rem;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+}
 
 * {
   margin: 0;
@@ -6,10 +36,351 @@
   box-sizing: border-box;
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+html {
+  scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background: linear-gradient(135deg, #f8f9fb 0%, #f0f3ff 100%);
+  color: #1f2937;
+  line-height: 1.6;
+  min-height: 100vh;
+  transition: background 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: 2.25rem;
+  line-height: 1.2;
+}
+
+h2 {
+  font-size: 1.875rem;
+  line-height: 1.25;
+}
+
+h3 {
+  font-size: 1.5rem;
+  line-height: 1.4;
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+a {
+  color: #6b7eea;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #4f5fd4;
+}
+
+button, [role="button"] {
+  font-family: var(--font-body);
+  transition: all 0.3s ease;
+}
+
+input, textarea, select {
+  font-family: var(--font-body);
+}
+
+code, pre {
+  font-family: "Geist Mono", monospace;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Smooth transitions */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* ============================================
+   MARKDOWN AND PROSE STYLING
+   ============================================ */
+
+/* Prose-like styling for markdown content */
+.prose {
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.prose-sm {
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+/* Paragraphs - improved spacing */
+.prose p {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.75;
+}
+
+/* First paragraph needs no top margin */
+.prose p:first-child {
+  margin-top: 0;
+}
+
+/* Headings - improved hierarchy and spacing */
+.prose h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.prose h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 1.25rem;
+  margin-bottom: 0.875rem;
+  line-height: 1.3;
+}
+
+.prose h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-top: 1rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+.prose h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 0.875rem;
+  margin-bottom: 0.625rem;
+}
+
+.prose h5, .prose h6 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Lists - improved spacing */
+.prose ul, .prose ol {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  padding-left: 1.625rem;
+}
+
+.prose ul li, .prose ol li {
+  margin-bottom: 0.625rem;
+  line-height: 1.625;
+}
+
+.prose li:last-child {
+  margin-bottom: 0;
+}
+
+/* Nested lists */
+.prose ul ul, .prose ol ol, .prose ul ol, .prose ol ul {
+  margin-top: 0.625rem;
+  margin-bottom: 0.625rem;
+}
+
+/* Code blocks - improved spacing */
+.prose pre {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* Inline code - improved styling */
+.prose code:not(pre code) {
+  background-color: #f3f4f6;
+  color: #dc2626;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+  font-family: "Geist Mono", monospace;
+}
+
+/* Dark theme inline code */
+.dark .prose code:not(pre code) {
+  background-color: #1f2937;
+  color: #fca5a5;
+}
+
+/* Blockquotes - improved styling */
+.prose blockquote {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  padding-left: 1rem;
+  border-left: 4px solid #6b7eea;
+  font-style: italic;
+  color: #6b7280;
+}
+
+/* Tables */
+.prose table {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.prose thead {
+  background-color: #f3f4f6;
+}
+
+.prose th {
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  border: 1px solid #e5e7eb;
+}
+
+.prose td {
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+}
+
+.prose tbody tr:nth-child(odd) {
+  background-color: #fafafa;
+}
+
+/* Links */
+.prose a {
+  color: #6b7eea;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.prose a:hover {
+  color: #4f5fd4;
+}
+
+/* Horizontal rule */
+.prose hr {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: none;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Strong and emphasis */
+.prose strong {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.prose em {
+  font-style: italic;
+  color: #4b5563;
+}
+
+/* Math formulas - KaTeX styling */
+.prose .math-display {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  overflow-x: auto;
+  padding: 0.75rem 0;
+}
+
+.prose .math-inline {
+  display: inline;
+  white-space: nowrap;
+}
+
+/* KaTeX container styling */
+.katex {
+  font-size: 1em;
+  line-height: inherit;
+}
+
+.katex-display {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* Ensure math doesn't break layout */
+.katex-html {
+  display: inline;
+}
+
+/* Improve line break handling */
+br {
+  line-height: inherit;
+}
+
+/* Special case: improve spacing for math-heavy content */
+.prose p:has(.math-inline) {
+  margin-bottom: 0.75rem;
+}
+
+/* Smaller prose variant */
+.prose-sm h1 {
+  font-size: 1.5rem;
+  margin-top: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.prose-sm h2 {
+  font-size: 1.25rem;
+  margin-top: 0.875rem;
+  margin-bottom: 0.625rem;
+}
+
+.prose-sm h3 {
+  font-size: 1.1rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose-sm ul,
+.prose-sm ol {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.prose-sm li {
+  margin-bottom: 0.5rem;
 }
