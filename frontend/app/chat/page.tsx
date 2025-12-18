@@ -440,23 +440,33 @@ export default function ChatPage() {
       >
         <div className="max-w-5xl mx-auto px-4 py-6">
           <form onSubmit={handleSendMessage} className="flex gap-3 items-end">
-            <motion.input
+            <motion.textarea
               whileFocus={{ scale: 1.02 }}
-              type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="질문을 입력하세요... (예: 벡터란 무엇인가요?)"
-              className="flex-1 px-6 py-4 text-base bg-slate-700 border border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-50 placeholder-slate-400 transition-all shadow-lg hover:border-slate-500"
+              onKeyDown={(e) => {
+                // Shift+Enter로 줄바꿈, Enter로 전송
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage(e as any);
+                }
+              }}
+              placeholder="질문을 입력하세요...
+(예: 벡터란 무엇인가요?)
+
+Shift+Enter: 줄바꿈 | Enter: 전송"
+              className="flex-1 px-6 py-5 text-base bg-slate-700 border-2 border-slate-600 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-50 placeholder-slate-400 transition-all shadow-lg hover:border-slate-500 resize-none min-h-[180px] max-h-[300px] leading-relaxed font-medium"
               disabled={loading}
+              rows={6}
             />
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               type="submit"
               disabled={loading || !input.trim()}
-              className="p-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 disabled:from-slate-600 disabled:to-slate-600 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-blue-500/50 disabled:shadow-none flex-shrink-0"
+              className="p-5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl hover:from-blue-700 hover:to-blue-800 disabled:from-slate-600 disabled:to-slate-600 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-blue-500/50 disabled:shadow-none flex-shrink-0 h-[180px] flex items-center justify-center"
             >
-              <Send className="w-6 h-6" />
+              <Send className="w-7 h-7" />
             </motion.button>
           </form>
 
