@@ -1,9 +1,0 @@
-{
-  "/_global-error/page": "app/_global-error/page.js",
-  "/_not-found/page": "app/_not-found/page.js",
-  "/chat/page": "app/chat/page.js",
-  "/curriculum/learn/[id]/page": "app/curriculum/learn/[id]/page.js",
-  "/curriculum/setup/page": "app/curriculum/setup/page.js",
-  "/page": "app/page.js",
-  "/settings/page": "app/settings/page.js"
-}
